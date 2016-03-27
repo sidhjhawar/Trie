@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
@@ -37,6 +38,16 @@ dependencies {
     testCompile("junit:junit")
 
     compile("com.google.guava:guava:18.0")
+
+    compile("org.springframework:spring-test") {
+        exclude group: "commons-logging"
+    }
+
+    testCompile(
+            "com.jayway.jsonpath:json-path:0.8.1",
+            "com.jayway.jsonpath:json-path-assert:0.8.1",
+            'org.mockito:mockito-all:1.8.4',
+    )
 }
 
 task wrapper(type: Wrapper) {
