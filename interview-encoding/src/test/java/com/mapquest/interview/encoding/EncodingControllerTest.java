@@ -2,47 +2,56 @@ package com.mapquest.interview.encoding;
 
 import com.mapquest.interview.model.Term;
 import com.mapquest.interview.processor.EncodingProcessor;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.mockito.Mockito.when;
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = Application.class)
+@WebAppConfiguration
 public class EncodingControllerTest {
-    EncodingController encodingController;
-    HttpServletResponse response;
     MockMvc mockMvc;
-    @Autowired
+    @Mock
     EncodingProcessor encodingProcessor;
+    EncodingController encodingController;
+    Term term;
 
     @Before
     public void setUp(){
+        mockMvc = MockMvcBuilders.standaloneSetup(new EncodingController()).build();
         encodingController =  new EncodingController();
+        term = new Term();
     }
 
     @Test
-    public void getAllTermsTest(){
-        Assert.assertNotNull(encodingController.getAll());
+    public void getAllTermsTest() throws Exception {
+        this.mockMvc.perform(get("/terms")
+                .accept(MediaType.parseMediaType("application/json")))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"));
+
+
+    /*    ArrayList<Term> terms = new ArrayList<Term>();
+        term.setBackRef(-1);
+        term.setSuffix("dig");
+        terms.add(term);
+        when(encodingProcessor.getAllTerms()).thenReturn(terms);
+        ArrayList<Term> expectedTerms = new ArrayList<Term>();
+        expectedTerms = ( ArrayList<Term>)encodingController.getAll();
+        Assert.assertEquals(terms,expectedTerms);
+        Assert.assertNotNull(encodingController.getAll());*/
     }
 
-    @Test
-    public void get() throws Exception {
-        List<Term> words = new ArrayList<Term>();
-        Term term1 = new Term();
-        term1.setSuffix("dig");
-        term1.setBackRef(-1);
-        Term term2 = new Term();
-        term2.setSuffix("est");
-        term2.setBackRef(0);
-        words.add(term1);
-        words.add(term2);
-        when(encodingProcessor.getAllTerms()).thenReturn(words);
 
-    }
 }
